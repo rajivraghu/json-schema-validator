@@ -9,6 +9,12 @@ import java.io.InputStream;
 import java.util.Set;
 
 public class Issue475Test {
+
+    protected JsonSchema getJsonSchemaFromStreamContentV7(InputStream schemaContent) {
+        JsonSchemaFactory factory = JsonSchemaFactory.getInstance(SpecVersion.VersionFlag.V7);
+        return factory.getSchema(schemaContent);
+    }
+
     protected JsonSchema getJsonSchemaFromStreamContentV291909(InputStream schemaContent) {
         JsonSchemaFactory factory = JsonSchemaFactory.getInstance(SpecVersion.VersionFlag.V201909);
         return factory.getSchema(schemaContent);
@@ -20,7 +26,7 @@ public class Issue475Test {
     }
 
     @Test
-    public void shouldWork() throws Exception {
+    public void shouldV201909Work() throws Exception {
         String schemaPath = "/schema/issue475-2019-09.json";
         String dataPath = "/data/issue475.json";
         InputStream schemaInputStream = getClass().getResourceAsStream(schemaPath);
@@ -28,7 +34,19 @@ public class Issue475Test {
         InputStream dataInputStream = getClass().getResourceAsStream(dataPath);
         JsonNode node = getJsonNodeFromStreamContent(dataInputStream);
         Set<ValidationMessage> errors = schema.validate(node);
-        Assertions.assertEquals(0, errors.size());
+        Assertions.assertEquals(2, errors.size());
+    }
+
+    @Test
+    public void shouldV7Work() throws Exception {
+        String schemaPath = "/schema/issue475-v7.json";
+        String dataPath = "/data/issue475.json";
+        InputStream schemaInputStream = getClass().getResourceAsStream(schemaPath);
+        JsonSchema schema = getJsonSchemaFromStreamContentV7(schemaInputStream);
+        InputStream dataInputStream = getClass().getResourceAsStream(dataPath);
+        JsonNode node = getJsonNodeFromStreamContent(dataInputStream);
+        Set<ValidationMessage> errors = schema.validate(node);
+        Assertions.assertEquals(2, errors.size());
     }
 
 }
