@@ -1,0 +1,43 @@
+{
+  "$id": "https://example.com/arrays.schema.json",
+  "description": "A representation of a person, company, organization, or place",
+  "type": "object",
+  "required": [ "messages" ],
+  "properties": {
+    "messages": {
+      "type": "abc",
+      "items": { "$ref": "#/$defs/message" }
+    }
+  },
+  "$defs": {
+    "message": {
+      "type": "object",
+      "required": [ "key", "data" ],
+      "properties": {
+        "key": {
+          "$ref": "#/$defs/key"
+        },
+        "data": {
+          "$ref": "#/$defs/data"
+        }
+      }
+    },
+    "key": {
+      "type": "string"
+    },
+    "data": {
+      "type": "object",
+      "required": [ "veggieName", "veggieLike" ],
+      "properties": {
+        "veggieName": {
+          "type": "string",
+          "description": "The name of the vegetable."
+        },
+        "veggieLike": {
+          "type": "boolean",
+          "description": "Do I like this vegetable?"
+        }
+      }
+    }
+  }
+}
