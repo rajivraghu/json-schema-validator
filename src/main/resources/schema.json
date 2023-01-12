@@ -1,0 +1,29 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "required": ["companyName"],
+    "message": {
+        "required":"cname required"
+      },
+    "required": ["companyCode"],
+    "message": {
+          "required":"companyCode required"
+    },  
+    "properties": {
+        "companyName": {
+            "type": "string",
+            "format":"uuid",
+            "message": {
+                "format":"not uuid"
+              }
+        },
+        "companyCode": {
+            "type": "string",
+            "pattern": "^\\S.*",
+            "message": {
+                "pattern":"No Space allowed"
+              }
+        }
+    }   
+}
+

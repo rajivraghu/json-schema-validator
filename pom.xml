@@ -84,6 +84,12 @@
             <artifactId>slf4j-api</artifactId>
             <version>${version.slf4j}</version>
         </dependency>
+
+        <dependency>
+    <groupId>com.github.fge</groupId>
+    <artifactId>jackson-coreutils</artifactId>
+    <version>1.0</version>
+</dependency>
         <!-- 
         Commons lang slated for removal but kept for projects that accidentally depend on it
         through accidental transitive runtime dependencies.
