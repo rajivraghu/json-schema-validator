@@ -9,7 +9,9 @@ import com.networknt.schema.SpecVersion.VersionFlag;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -19,54 +21,78 @@ public class JsonSchemaValidator {
 
     public static void main(String[] args) throws IOException {
         // Load the JSON Schema file
-        File schemaFile = new File("/workspaces/json-schema-validator/src/main/resources/schema.json");
+        File schemaFile = new File("/workspace/json-schema-validator/src/main/resources/schema.json");
         JsonNode schemaNode = JsonLoader.fromFile(schemaFile);
 
-     
+        boolean sendMultipleInputErrors = true;
+
+        List<InputErrorDTO> inputErrors = new ArrayList<InputErrorDTO>();
 
         // Create a JSON Schema object from the schema file
-        
+
         JsonSchemaFactory factory = JsonSchemaFactory.getInstance(VersionFlag.V7);
-        
+
         JsonSchema schema = factory.getSchema(schemaNode);
 
         // Load the JSON file to be validated
-        File jsonFile = new File("/workspaces/json-schema-validator/src/main/resources/data.json");
+        File jsonFile = new File("/workspace/json-schema-validator/src/main/resources/data.json");
         JsonNode jsonNode = JsonLoader.fromFile(jsonFile);
 
         // Validate the JSON file against the schema
         Set<ValidationMessage> errors = schema.validate(jsonNode);
 
         // Print any validation errors
+        String fieldName = null;
+        int count =0;
+        Map<String, String> requiredMap = new HashMap<>();
         for (ValidationMessage error : errors) {
-            if(error.getType().equalsIgnoreCase("required")){
-                Map<String, String> requiredMap=  new HashMap<>();
-                JsonNode requiredNode = schemaNode.get("custom");
-                if(requiredNode.isObject()){                
-                    if(requiredNode.isObject()){
-                    requiredNode.fields().forEachRemaining(entry->{
-                    requiredMap.put(entry.getKey(), entry.getValue().asText());
-                     });
-                    }
+            if (error.getType().equalsIgnoreCase("required")) {
+                if(count ==0)
+                extracted(schemaNode, requiredMap);
 
-                }
-             
-                String input = error.getMessage()   ;
-                String fieldName = null;
-                Pattern pattern = Pattern.compile("\\$.\\w+");
+                String input = error.getMessage();
+                System.out.println("input"+input);
+                Pattern pattern = Pattern.compile("(.*):");
                 Matcher matcher = pattern.matcher(input);
                 if (matcher.find()) {
-                fieldName = matcher.group();
-             }
+                    fieldName = matcher.group(1);
+                }
 
-        System.out.println("fieldName-->"+fieldName); // prints "$.companyName"
-        System.out.println( requiredMap.get(fieldName));
+                 System.out.println("fieldName-->"+fieldName); // prints "$.companyName"
+                 System.out.println( requiredMap.get(fieldName));
+
+                InputErrorDTO inputError = new InputErrorDTO();
+                inputError.setFieldName(fieldName);
+                inputError.setErrorCode(requiredMap.get(fieldName));
+                inputErrors.add(inputError);
+                if (!sendMultipleInputErrors)
+                    break;
+
+            } else {
+
+                System.out.println(error.getPath()+error.getMessage());
+                InputErrorDTO inputError = new InputErrorDTO();
+                inputError.setFieldName(error.getPath());
+                inputError.setErrorCode(error.getMessage());
+                inputErrors.add(inputError);
+                if (!sendMultipleInputErrors)
+                    break;
 
             }
-            else {
-                System.out.println(error.getMessage());
+            count++;
+        }
 
-            }
+        System.out.println("list.." + inputErrors);
+
+    }
+
+    private static void extracted(JsonNode schemaNode, Map<String, String> requiredMap) {
+        JsonNode requiredNode = schemaNode.get("custom");
+        if (requiredNode.isObject()) {
+            requiredNode.fields().forEachRemaining(entry -> {
+                requiredMap.put(entry.getKey(), entry.getValue().asText());
+            });
         }
     }
+
 }

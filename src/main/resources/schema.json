@@ -1,27 +1,53 @@
 {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "type": "object",
-    "required": ["companyName","companyCode"],
+    "required": ["companyName","companyCode", "address"],
     "custom":{
         "$.companyName":"comp.name.mandatory",
-        "$.companyCode":"comp.code.mandatory"
-
+        "$.companyCode":"comp.code.mandatory",
+        "$.address":"comp.address.mandatory",
+        "$.address.line1":"addr.line1.mandatory",
+        "$.address.line2":"addr.line2.mandatory"
     },
     "properties": {
         "companyName": {
             "type": "string",
-            "format":"uuid",
+            "pattern": "^\\S.*",
             "message": {
-                "format":"not uuid"
+                "format":"no.space.allowed"
               }
         },
         "companyCode": {
             "type": "string",
             "pattern": "^\\S.*",
             "message": {
-                "pattern":"No Space allowed"
+                "pattern":"no.space.allowed"
               }
+        },
+        "address": {
+            "type": "object",
+            "required": ["line1", "line2"],
+            "custom":{
+                "$.line1":"line1.mandatory",
+                "$.line2":"line2.mandatory"
+               
+            },
+            "properties": {
+                "line1": {
+                    "type": "string",
+                    "pattern": "^\\S.*",
+                    "message": {
+                        "pattern":"no.space.allowed"
+                    }
+                },
+                "line2": {
+                    "type": "string",
+                    "pattern": "^\\S.*",
+                    "message": {
+                        "pattern":"no.space.allowed"
+                    }
+                }
+            }
         }
-    }   
+    }
 }
-
