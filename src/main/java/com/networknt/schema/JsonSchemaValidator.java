@@ -21,7 +21,7 @@ public class JsonSchemaValidator {
 
     public static void main(String[] args) throws IOException {
         // Load the JSON Schema file
-        File schemaFile = new File("/workspace/json-schema-validator/src/main/resources/schema.json");
+        File schemaFile = new File("/workspaces/json-schema-validator/src/main/resources/schema.json");
         JsonNode schemaNode = JsonLoader.fromFile(schemaFile);
 
         boolean sendMultipleInputErrors = true;
@@ -35,7 +35,7 @@ public class JsonSchemaValidator {
         JsonSchema schema = factory.getSchema(schemaNode);
 
         // Load the JSON file to be validated
-        File jsonFile = new File("/workspace/json-schema-validator/src/main/resources/data.json");
+        File jsonFile = new File("/workspaces/json-schema-validator/src/main/resources/data.json");
         JsonNode jsonNode = JsonLoader.fromFile(jsonFile);
 
         // Validate the JSON file against the schema
